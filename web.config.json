@@ -2,9 +2,9 @@
     "port": "80",
     "index": "/index",
     "sessionKey": "my_session_id",
-    "uploadDir": "./upload",
-    "serviceDir": "./service",
-    "clientDir": "./frontend",
+    "uploadDir": "upload",
+    "serviceDir": "service",
+    "clientDir": "frontend",
     "database":{ 
         "host":"127.0.0.1",
         "port":"3306",
