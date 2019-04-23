@@ -1,0 +1,27 @@
+{
+  "name": "webcontext",
+  "version": "1.0.2",
+  "description": "web framework and web server for Node.js,support session,mysql database,file upload,build-in static file server",
+  "keywords": [
+    "web",
+    "context",
+    "framework",
+    "http",
+    "server",
+    "middleware",
+    "node",
+    "node.js"
+  ],
+  "main": "lib/webapplication.js",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "formidable": "^1.2.1",
+    "mysql": "^2.16.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "windyfancy",
+  "license": "MIT"
+}

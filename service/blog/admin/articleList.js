@@ -7,7 +7,11 @@ module.exports= {
         }else if(data.catalogId){
             params={catalogId:data.catalogId};
         }
-        this.database.select("wb_article",params).then( (result)=>{
+        this.database.select("wb_article",params,{
+            count:true,
+            pageIndex:data.pageIndex,
+            pageSize:data.pageSize
+        }).then( (result)=>{
             this.render(JSON.stringify(result));
         })
     }
