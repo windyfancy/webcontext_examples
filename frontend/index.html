@@ -1,21 +1,59 @@
-<!DOCTYPE html>
 <html>
-       
 <head>
-    <meta charset="utf-8">
-    <title>webspark</title>
-    <link rel="stylesheet" href="./src/css/iview.css">
-    <link rel="stylesheet" href="./src/css/iview-editor.css">
-    
-
+<script src="../../js/jquery-1.8.3.js"></script>
 </head>
 <body>
-    <div id="app">  </div>
+<ul id="list"></ul>
+<input type="text" id="title">
+<button id="btn_add">添加</button>
 </body>
 <script>
- 
+function render(){
+    $.post("/todo/list",{},function (result){
+        var html="";
+        result.forEach(function(item){
+            var li=`<li itemId="${item.id}">
+            <input type="textbox" value="${item.title}">
+            <a href="javascript:" id="btn_save">保存</a>
+            <a href="javascript:"  id="btn_delete">删除</a>
+            </li>`
+            html+=li;
+        })
+
+        $("#list").html(html);
+       
+    });
+}
+$(function (){
+    render();
+})
+$("#btn_add").click("click",function (e){
+    $.post("/todo/add",{title:$("#title").val()},function (res){
+        if(res.code="OK"){
+            render();
+        }
+        
+    });
+})
+$("#list").click("click",function (e){
+    if(e.target.id=="btn_save"){
+        var id=$(e.target).parents("li").attr("itemId")
+        var title=$(e.target).parents("li").find("input").val()
+        $.post("/todo/update",{id:id,title:title},function (res){
+            if(res.code="OK"){
+                render();
+            }
+        });
+    }else if(e.target.id=="btn_delete"){
+        var id=$(e.target).parents("li").attr("itemId")
+        $.post("/todo/delete",{id:id},function (res){
+            if(res.code="OK"){
+                render();
+            }
+        });
+    }
+
+})
+
 </script>
- 
-<script src="./dist/main.js"></script>
- 
 </html>
