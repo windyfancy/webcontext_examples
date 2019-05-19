@@ -11,5 +11,8 @@
         "user":"root",
         "password":"windyfancy123",
         "database":"todo_db"
+    },
+    "cors":{
+        "allowOrigin":"*"
     }
 }
