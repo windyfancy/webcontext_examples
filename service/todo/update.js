@@ -1,5 +1,5 @@
 module.exports= {
-    async onRequest() {
+    async onLoad() {
         await this.database.update("todo_list",this.request.data)
         this.render({code:"OK"})
     }
