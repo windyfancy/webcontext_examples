@@ -3,15 +3,16 @@
 <script src="js/jquery-1.8.3.js"></script>
 <style>
 ul,li{list-style: none;padding:2px;}
-#list li input{border-width:0px 0px 1px 0px;}
-#list li.on input{border-width:1px;}
+#list li input[type=textbox]{border-width:0px 0px 1px 0px;}
+#list li .delete{display: none}
+#list li:hover .delete{display: inline-block}
  
 </style>
 </head>
 <body>
 <ul id="list"></ul>
 <input type="text" id="title" placeholder="输入待办事项">
-<button id="btn_add" >添加</button>
+<button id="btn_add">添加</button>
 </body>
 <script>
 function render(){
@@ -20,33 +21,21 @@ function render(){
         result.forEach(function(item){
             var checked=item.status>0?"checked":"";
             var li=`<li itemId="${item.id}">
-                <input name="chk" type="checkbox" ${checked}>
-            <input type="textbox" value="${item.title}">
-            <span><a href="javascript:" id="btn_save">保存</a>
-            <a href="javascript:"  id="btn_delete">删除</a>
-            </span>
+                <input type="checkbox" ${checked}>
+                <input type="textbox" value="${item.title}">
+                <a href="javascript:"  class="delete">删除</a>
             </li>`
             html+=li;
         })
-
         $("#list").html(html);
-       
     });
 }
 $(function (){
     render();
 })
-$("#btn_add").click("click",function (e){
-    $.post("/todo/add",{title:$("#title").val()},function (res){
-        if(res.code="OK"){
-            render();
-        }
-        
-    });
-})
-$("#list").click("click",function (e){
-    if(e.target.id=="btn_save" || e.target.name=="chk"){
-        var li=$(e.target).parents("li");
+
+function saveItem(target){
+    var li=$(target).parents("li");
         var id=li.attr("itemId")
         var title=li.find("input[type=textbox]").val();
         var status=li.find("input[type=checkbox]").prop("checked")?1:0;
@@ -55,16 +44,30 @@ $("#list").click("click",function (e){
                 render();
             }
         });
-    }else if(e.target.id=="btn_delete"){
-        var id=$(e.target).parents("li").attr("itemId")
-        $.post("/todo/delete",{id:id},function (res){
-            if(res.code="OK"){
-                render();
-            }
-        });
-    }
-
+}
+function deleteItem(target){
+    var id=$(target).parents("li").attr("itemId")
+    $.post("/todo/delete",{id:id},function (res){
+        if(res.code="OK"){
+            render();
+        }
+    });
+}
+$("#list").on("change","input[type=textbox]",function (e){
+    saveItem(e.target);
 })
-
+$("#list").on("click","input[type=checkbox]",function (e){
+    saveItem(e.target)
+})
+$("#list").on("click",".delete",function (e){
+    deleteItem(e.target)
+})
+$("#btn_add").click("click",function (e){
+    $.post("/todo/add",{title:$("#title").val()},function (res){
+        if(res.code="OK"){
+            render();
+        }
+    });
+})
 </script>
 </html>
