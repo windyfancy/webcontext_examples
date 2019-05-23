@@ -1,44 +1,43 @@
-我们从todolist开始，揭开后台开发的神秘面纱，让你知道后端开发其实也不困难，克服心理障碍，成为一名全栈开发工程师。
+做为一名前端开发工程师，时常纠结于是否要学习后端开发，成为一名全栈，可是node.js好像很难啊，深入浅出node.js这本书成功劝退了许多想学全栈的同学，因为一开始就把后端开发最艰深的一面展示了出来，如模块和内存管理等，虽然对于有更高追求的开发者来说， 这些原理肯定是掌握的越深入越好，但是对于普通的后台业务开发来说，只需要会用能实现业务就可以了，
+我们今天就从todo list项目开始，揭开后台开发的神秘面纱，走上全栈开发工程师之路。
 
-我们打算步步为营，从零开始逐渐完善整个项目代码
+本教程适合有一定前端基础、轻微了解node.js的开发人员（其实只需要知道npm安装和引用模块就已足够）
+
+我们打算从零开始，步步为营逐渐完善整个项目代码
 1. 第一步，先实现一个最简化的纯静态版本的todolist
 2. 第二步，建立后台接口，用mock测试数据填充，让页面先能够正常显示出来
 3. 第三步，设计数据库，将测试数据改为真正的接口
 
-其实这也是真实项目的开发流程，现在的前后台开发都是分离的，前后台开发先按照接口约定各自定代码，前端用静态数据模拟（mock)能够完成99%以上的功能开发，后端接口开发完毕之后对接。
+其实这也是真实项目的开发流程，现在的前后台开发都是分离的，前后台开发先按照接口约定各自开发代码，前端用静态数据模拟（mock)能够完成99%以上的功能开发，后端都是纯数据，自己单元测试就好了，全部开发完毕之后，前后台对接部署在测试环境。
 
 
-# 前端纯静态版todolist
-为了保持教程的简单，前端代码用jquery实现，建立一个index.html的空白文件，在页面引入jquery，并添加一个ul元素 做为容器。加一个文本框和添加按钮，html代码如下：
+# 迈步从头跃，前端纯静态版todolist
+为了保持教程的简单，前端代码用jquery实现，先建立一个index.html的空白文件，在页面引入jquery，并添加一个ul元素 做为容器。加一个文本框和添加按钮，html代码如下：
 ```html
 <ul id="list"></ul>
 <input type="text" id="title" placeholder="输入待办事项">
 <button id="btn_add">添加</button>
 ```
-现在还没有后台数据库，数据只能先用静态的数组定义，每条记录有id,title,status 三个属性（字段），分别表示事项的编号、标题、是否已完成。
-我们用测试数据定义一个数组，然后用forEach循环，用html字符串进行拼接，最后合并html生成dom，该示例用了ES6的模板字符串，方便书写和演示。
+现在还没有后台数据库，数据只能先用静态的数组来定义，每条记录有id,title,status 三个属性，分别表示事项的编号、标题、是否已完成。
+定义一个数组存放用测试数据，然后用forEach循环该数组，对html字符串进行拼接，最后合并html生成dom，该示例用了ES6的模板字符串，方便书写和演示。
 
 代码如下：
 ```js
 function render(){
-    
         var html="";
         var result=[
         {id:1,title:"hello",status:0},
-        {id:2,title:"hello",status:0}
+        {id:2,title:"hello",status:0} 
         ];
         result.forEach(function(item){
             var checked=item.status>0?"checked":"";
             var li=`<li itemId="${item.id}">
-                <input name="chk" type="checkbox" ${checked}>
-            <input type="textbox" value="${item.title}">
-            <span><a href="javascript:" id="btn_save">保存</a>
-            <a href="javascript:"  id="btn_delete">删除</a>
-            </span>
+                <input type="checkbox" ${checked}>
+                <input type="textbox" value="${item.title}">
+                <a href="javascript:"  class="delete">删除</a>
             </li>`
             html+=li;
         })
-
         $("#list").html(html);
        
     
@@ -48,9 +47,10 @@ $(function (){
 })
 ```
 
-运行 index.html,显示效果：
-![](https://user-gold-cdn.xitu.io/2019/5/20/16ad1383c3c59533?w=292&h=68&f=png&s=2937)
-# 第一次迭代，用mock数据，连接真实的后台接口
+运行 index.html,成功显示出页面。
+
+![](https://user-gold-cdn.xitu.io/2019/5/23/16ae2e67955ea970?w=271&h=79&f=png&s=2424)
+# 第二次迭代，用mock数据，连接真实的后台接口
 好了，静态页面渲染已经写好，要迈出后台开发的第一步了，把静态数据改成调用ajax 接口，对render函数稍做改造即可
 
 ```js
@@ -121,7 +121,7 @@ const app = new WebContext();
 
 ![](https://user-gold-cdn.xitu.io/2019/5/20/16ad5d2ade294062?w=446&h=354&f=png&s=28042)
 
-# 第二次迭代，设计mysql数据库，为改用真实数据做准备
+# 战前准备工作，设计mysql数据库
 上一步完成了后台http接口的搭建，用mock静态数据验证了todolist的加载功能正常。终于到了激动人心的数据库开发环节了，想想马上就可以做个高大上的CURD boy了，走上人生巅峰，出任CEO，心情真是有点小激动呢。
 
 简单了解一下吧，顾名思义，数据库是用来存放数据的地方，目前主流的数据库是关系数据库，如mysql、oracle、sql server等，以行列结构存储一张张表的数据，就如同一个excel表格，每一张表是一个独立的sheet，我们把刚才静态的json数据转换成表的形式如下：
@@ -250,10 +250,11 @@ module.exports= {
 
 
 
-# 第四次迭代，增加前端的添加，保存和删除逻辑,样式美化
- 好了，现在CURD操作都已经完成了，业务代码只有8行，其实可以更少，因为mysql 加入了replace into语法，insert 和 update可以合二为一。即使加上一些参数的合法性校验，代码量也是非常少的。现在前后台分离之后，数据库业务的后台开发真的比前端要简单很多，除了一些多表连接和统计的sql语句比较难写之外，其它真的没有什么难度了。
+# 第四次迭代，增加添加，保存和删除前端代码 
+ 好了，现在CURD操作都已经完成了，业务代码只有8行，其实可以更少，因为mysql 支持replace into语句，insert 和 update可以合二为一。即使加上一些参数的合法性校验，代码量也是非常少的。现在前后台分离之后，数据库业务的后台开发
+ 真的要比前端要简单很多，除了一些多表连接和统计的sql语句比较难写之外，其它都是重复度很高的数据操作代码，不过话说回来，自从前端普及了vue,react之后，开发门槛也降低了很多。
  
- 现在后台接口都完成了，但是添加、修改、删除的前端代码还没有实现，
+ 现在后台接口都完成了，但是添加、修改、删除的前端代码还没有实现，我们用事件委托的方式添加dom操作和ajax请求的代码
 ```js
 function saveItem(target){
     var li=$(target).parents("li");
@@ -292,8 +293,35 @@ $("#btn_add").click("click",function (e){
 })
 ```
 
-# 第五次迭代 ，静态文件迁移到http服务器，完工
+# 清理战场 ，静态文件迁移部署到http服务器 
 
 现在所有代码都已经完工，可是html和js文件总不能一直放在本地吧，webcontext已经内置了静态文件服务，只需要把本地的index.html和jquery.js存放在站点根目录下/frontend目录下，再来访问http://localhost/index.html，就可以访问到了。
+具体原理请参考：[Node.js 实现类似于.php，.jsp的服务器页面技术，自动路由](https://juejin.im/post/5ccf00eae51d453b7f0a0d44)
 
 最后，既然已经都在同一个http路径下了，可以把代码里$.post的绝对路径都改成相对路径。
+
+# 总结
+本文用了8行代码实现了todolist 后台接口，为什么只需要这么少的代码，源于webcontext的设计理念：约定优于配置，默认配置优于手工配置，配置优于编码，将开发者的用户体验放在第一位。
+
+举例来说:
+1. 它实现了服务器页面技术，不再需要添加路由的代码，因为页面地址本身已经包含了路由信息，一个文件处理一个请求，也便于解耦，定义路由本身就属于画蛇添足
+2. 只要配置了数据库连接字符串，自动连接数据库，一行代码实现CURD，也实现了ORM数据库实体映射，实现了不需要写sql就可以操作数据库。
+3. 对于表单、上传、json，各个环节都是自动解析为对象的，甚至可以将表单数据直接写入数据库，省去中间转换参数的冗余代码
+
+
+webcontext的结构设计参考了asp.net的优雅设计，用一个空的context对象容器，引用request,response,session这些http请求处理操作类，并进行了扩展，增加了数据库访问，日志写入器等对象
+主要结构如下：
+
+
+
+
+
+![](https://user-gold-cdn.xitu.io/2019/5/23/16ae27b8e5fd441c?w=473&h=838&f=png&s=63216)
+
+
+虽然提供了如此多的功能，它的代码却非常精简，只有千行左右，很容易读懂，它虽然强大，却不是阳春白春，并不高深，如果你想了解一个web框架是如何铸成的，不妨来读一下它的源码，如果你认为有用，请不要吝惜你的star。
+
+github地址：[https://github.com/windyfancy/webcontext](https://github.com/windyfancy/webcontext)
+
+
+本文的全部代码也已经上传github，在webcontext_examples项目中，有需要的同学可以自行查阅。
