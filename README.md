@@ -138,7 +138,7 @@ const app = new WebContext();
 
 我们来建表吧，首先肯定要安装mysql了
 
-上官方网站https://www.mysql.com/downloads/ 下载安装一下，完整安装一下。装 好之后，就 可以用用自带的workbench连接数据库了。用你刚才安装时初始设定的密码连接一下：
+上官方网站https://www.mysql.com/downloads/ 下载安装一下，完整安装一下。装 好之后，就 可以用自带的workbench连接数据库了。用你刚才安装时初始设定的密码连接一下：
 
 
 ![](https://user-gold-cdn.xitu.io/2019/5/20/16ad5dae44acf6ca?w=761&h=267&f=png&s=35279)
@@ -186,7 +186,7 @@ CREATE TABLE `todo_list` (
 webcontext已经对insert,update,select,delete进行了封装，因此对于简单的读写操作，不需要编写原始的sql语句了。
 
 ## insert 
-在项目目录创建一个js文件，/service/todo/add.js ，并编写代码：
+在项目目录创建一个js文件，/service/todo/add.js，webcontext实现了页面地址自动路由，不用手工编写路由代码，当访问http://localhost/service/todo/add时，会自动调用这个路径（/service/todo/add.js)文件中的onLoad方法，为add.js并编写如下代码：
 ```js
 module.exports= {
     async onLoad() {
@@ -196,13 +196,13 @@ module.exports= {
 }
 ```
 只有4行代码， 我们来逐行解释一下
-1. module.exports：表示导出这个对象，这样webcontext框架才能自动引用到它，这个对象会自动从Context类继承,你不用编写任何extend或修改prototype的代码 ， webcontext框架内部实现了对/service目录下的文件自动添加路由和继承的功能。具体原理也非常简单，可以看下我的这篇文章->：[Node.js 实现类似于.php，.jsp的服务器页面技术，自动路由](https://juejin.im/post/5ccf00eae51d453b7f0a0d44)
-2. async onLoad 函数：首先，这是一个异步函数，由于第3行代码访问数据库用了await，所以这里必须要加async关键字，然后onLoad是一个事件，也可以说是一个回调函数，它表示这个函数的代码是在后台接收到http请求后执行
+1. module.exports：表示导出这个对象，这样webcontext框架才能自动引用到它，这个对象会自动从Context类继承,你不用编写任何extend或修改prototype的代码 ， webcontext框架内部实现了对/service目录下的文件自动添加路由和自动继承的功能。不用任何的require和extend，具体原理也非常简单，可以看下我的这篇文章->：[Node.js 实现类似于.php，.jsp的服务器页面技术，自动路由](https://juejin.im/post/5ccf00eae51d453b7f0a0d44)
+2. async onLoad 函数：首先，这是一个异步函数，由于第3行代码访问数据库用了await，所以这里必须要加async关键字，然后onLoad是一个事件，也可以说是一个回调函数，它表示这个函数的代码是在后台接收到http请求后执行。
 3. this.database.insert， 由于当前文件自动继承自Context类,可以通过this获取到请求对象request、响应对象response，以及database对象，database对象封装了基本的curd操作。insert方法第一个参数表示要插入的表名，第二个参数是一个对象，表示要插入的字段名和字段值，为了便于测试，我们先用死数据测试一下 {  title:"hello",status:0}
 4. this.render 将传入的字符串或对象输出到http响应。传入object的话会自动stringify。
 
 
-写好之后，我们来访问http://localhost/service/todo/add.js，然后使用mysql workbench查看一下数据库，发现数据已经成功入库了。
+写好之后，我们来访问http://localhost/service/todo/add，然后使用mysql workbench查看一下数据库，发现数据已经成功入库了。
 测试成功后，我们把这行写死的数据改过来吧，this.request.data["title"]表示获取post表单中的title字段。
 
 ```js
