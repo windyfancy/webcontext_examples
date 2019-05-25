@@ -2,11 +2,44 @@
 <head>
 <script src="js/jquery-1.8.3.js"></script>
 <style>
-ul,li{list-style: none;padding:2px;}
+ul,li{list-style: none;padding:0px;}
+li{line-height: 40px;position: relative;}
 #list li input[type=textbox]{border-width:0px 0px 1px 0px;}
-#list li .delete{display: none}
-#list li:hover .delete{display: inline-block}
+#list li input[type=checkbox]:checked + input {text-decoration: line-through;color:lightgray}
+
+#list li input[type=checkbox] {
+	opacity: 0;
+    position: absolute;left:0;width:40px;height:40px;
+}
+#list li input[type=checkbox] + label {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+	background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23ededed%22%20stroke-width%3D%223%22/%3E%3C/svg%3E');
+	background-repeat: no-repeat;
+	background-position: center left;
  
+}
+
+#list li input[type=checkbox]:checked + label {
+	background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2240%22%20height%3D%2240%22%20viewBox%3D%22-10%20-18%20100%20135%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22none%22%20stroke%3D%22%23bddad5%22%20stroke-width%3D%223%22/%3E%3Cpath%20fill%3D%22%235dc2af%22%20d%3D%22M72%2025L42%2071%2027%2056l-4%204%2020%2020%2034-52z%22/%3E%3C/svg%3E');
+}
+
+
+#list li .delete{display: none; color:#af5b5e;text-decoration: none;    font-size: 25px;  position: absolute; margin-left: 20px; }
+#list li:hover .delete{display: inline-block;}
+#title{height:28px;border: 1px solid lightgray;}
+
+button {
+    border: 1px solid transparent;
+    padding: 5px 15px 6px;
+    font-size: 12px;
+    border-radius: 5px;
+    color: #515a6e;
+    background-color: #fff;
+    border-color: #dcdee2
+}
 </style>
 </head>
 <body>
@@ -21,13 +54,14 @@ function render(){
         result.forEach(function(item){
             var checked=item.status>0?"checked":"";
             var li=`<li itemId="${item.id}">
-                <input type="checkbox" ${checked}>
+                <input type="checkbox" ${checked}><label></label>
                 <input type="textbox" value="${item.title}">
-                <a href="javascript:"  class="delete">删除</a>
+                <a href="javascript:"  class="delete">×</a>
             </li>`
             html+=li;
         })
         $("#list").html(html);
+        
     });
 }
 $(function (){
@@ -66,6 +100,7 @@ $("#btn_add").click("click",function (e){
     $.post("/todo/add",{title:$("#title").val()},function (res){
         if(res.code="OK"){
             render();
+            $("#title").val("")
         }
     });
 })
